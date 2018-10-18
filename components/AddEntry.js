@@ -120,7 +120,7 @@ class AddEntry extends Component {
                    const value = this.state[key]
 
                    return (
-                       <View key={key}>
+                       <View key={key} >
                             {getIcon()}
                             {type === 'slider'
                             ? <UdaciSlider
