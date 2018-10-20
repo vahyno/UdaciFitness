@@ -8,8 +8,12 @@ import UdacityFitnessCalendar from 'udacifitness-calendar';
 import {white} from '../utils/colors';
 import DateHeader from './DateHeader';
 import MetricCard from './MetricCard';
+import {AppLoading} from 'expo';
 
 class History extends React.Component {
+    state = {
+        ready: false,
+    }
     componentDidMount(){
         const {dispatch} = this.props;
         fetchCalendarResults()
@@ -20,7 +24,8 @@ class History extends React.Component {
                         [timeToString()]: getDailyReminderValue(),
                     }))
                 }
-            }) 
+            })
+            .then(()=> this.setState({ready: true})) 
     }
 
     renderItem = ({today, ...metrics}, formattedDate, key) => {
@@ -53,6 +58,11 @@ class History extends React.Component {
 
     render(){
         const {entries} = this.props;
+        const {ready} = this.state;
+
+        if (ready === false) {
+            return <AppLoading />
+        }
         return (
             <UdacityFitnessCalendar 
                 items={entries}
