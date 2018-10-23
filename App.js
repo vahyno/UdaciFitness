@@ -1,13 +1,23 @@
 import React from 'react';
-import { View, Platform } from 'react-native';
+import { View, Platform, StatusBar } from 'react-native';
 import AddEntry from './components/AddEntry';
 import {createStore} from 'redux';
 import {Provider} from 'react-redux';
 import reducer from './reducers';
 import History from './components/History';
-import {createMaterialTopTabNavigator, createBottomTabNavigator} from 'react-navigation';
+import {createMaterialTopTabNavigator, createBottomTabNavigator, createStackNavigator} from 'react-navigation';
 import {purple, white} from './utils/colors';
 import {FontAwesome, Ionicons} from '@expo/vector-icons';
+import {Constants} from 'expo';
+import EntryDetail from './components/EntryDetail';
+
+function UdaciStatusBar ({backgroundColor, ...props}) {
+  return (
+    <View style={{backgroundColor, height: Constants.statusBarHeight}}>
+      <StatusBar translucent backgroundColor={backgroundColor} {...props}/>
+    </View>
+  )
+}
 
 const TabsIos = createBottomTabNavigator({
   History: {
@@ -44,6 +54,7 @@ const TabsIos = createBottomTabNavigator({
   }
 });
 
+
 const TabsAndroid = createMaterialTopTabNavigator({
   History: {
     screen: History,
@@ -77,7 +88,25 @@ const TabsAndroid = createMaterialTopTabNavigator({
       shadowOpacity: 1
     }
   }
-})
+});
+
+const MainNavigator = createStackNavigator({
+  Home: {
+    screen: Platform.OS === 'ios' ? TabsIos : TabsAndroid,
+    navigationOptions: {
+      header: null,
+    },
+  },
+  EntryDetail: {
+    screen: EntryDetail,
+    navigationOptions: {
+      headerTintColor: white,
+      headerStyle: {
+        backgroundColor: purple,
+      }
+    }
+  }
+});
 
 const store = createStore(reducer);
 
@@ -86,8 +115,8 @@ export default class App extends React.Component {
     return (
       <Provider store={store}>
         <View style={{flex: 1}}>
-          <View style={{height:20}}/>
-          {Platform.OS === 'ios' ? <TabsIos/> : <TabsAndroid/>}
+          <UdaciStatusBar backgroundColor={purple} barStyle='light-content'/>
+          <MainNavigator />
         </View>
       </Provider>
     );
