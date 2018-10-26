@@ -8,7 +8,7 @@ import { calculateDirection } from '../utils/helpers';
 class Live extends Component {
     state = {
         coords: null,
-        status: null,
+        status: 'null',
         direction: '',
     }
 
@@ -19,8 +19,6 @@ class Live extends Component {
               return this.setLocation()
             }
             this.setState(() => ({ status }));
-            console.log('status:', status);
-            console.warn(this.state);
             })
             .catch((error) => {
             console.warn('Error getting Location permission: ', error)
@@ -35,7 +33,6 @@ class Live extends Component {
                 return this.setLocation()
                 }
                 this.setState(() => ({ status }))
-                console.warn('status was not granted')
             })
             .catch((error) => console.warn('error asking Location permission: ', error))
     }
@@ -45,7 +42,7 @@ class Live extends Component {
             enableHighAccuracy: true,
             timeInterval: 1,
             distanceInterval: 1,
-        }), (coords) => {
+        }, ({coords}) => {
             const newDirection = calculateDirection(coords.heading);
             // const {direction} = this.state;
             this.setState(()=>({
@@ -53,7 +50,7 @@ class Live extends Component {
                 status: 'granted',
                 direction: newDirection,
             }))
-        }
+        })
     }
 
     render(){
